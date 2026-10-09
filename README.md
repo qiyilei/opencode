@@ -26,18 +26,50 @@ OpenCode is a Go-based CLI application that brings AI assistance to your termina
 
 <a href="https://www.youtube.com/watch?v=P8luPmEa1QI"><img width="550" src="https://i3.ytimg.com/vi/P8luPmEa1QI/maxresdefault.jpg"></a><p>
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Configuration](#configuration)
+  - [Environment Variables](#environment-variables)
+  - [Shell Configuration](#shell-configuration)
+  - [Configuration File Structure](#configuration-file-structure)
+  - [Context Files](#context-files)
+  - [Themes](#themes)
+  - [JSON Schema](#json-schema)
+- [Supported AI Models](#supported-ai-models)
+- [Usage](#usage)
+- [Non-interactive Prompt Mode](#non-interactive-prompt-mode)
+- [Command-line Flags](#command-line-flags)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Image Attachments](#image-attachments)
+- [AI Assistant Tools](#ai-assistant-tools)
+- [Architecture](#architecture)
+- [Custom Commands](#custom-commands)
+- [MCP (Model Context Protocol)](#mcp-model-context-protocol)
+- [LSP (Language Server Protocol)](#lsp-language-server-protocol)
+- [Using Github Copilot](#using-github-copilot)
+- [Using a self-hosted model provider](#using-a-self-hosted-model-provider)
+- [Development](#development)
+- [Acknowledgments](#acknowledgments)
+- [License](#license)
+- [Contributing](#contributing)
+
 ## Features
 
 - **Interactive TUI**: Built with [Bubble Tea](https://github.com/charmbracelet/bubbletea) for a smooth terminal experience
-- **Multiple AI Providers**: Support for OpenAI, Anthropic Claude, Google Gemini, AWS Bedrock, Groq, Azure OpenAI, and OpenRouter
+- **Multiple AI Providers**: Support for OpenAI, Anthropic Claude, Google Gemini, AWS Bedrock, Groq, Azure OpenAI, OpenRouter, and xAI
 - **Session Management**: Save and manage multiple conversation sessions
 - **Tool Integration**: AI can execute commands, search files, and modify code
 - **Vim-like Editor**: Integrated editor with text input capabilities
+- **Image Attachments**: Attach images to your messages via the built-in file picker (with image preview)
+- **Themes**: 9 built-in color themes (including Catppuccin, Dracula, Gruvbox, Tokyo Night) with light/dark terminal support
 - **Persistent Storage**: SQLite database for storing conversations and sessions
 - **LSP Integration**: Language Server Protocol support for code intelligence
 - **File Change Tracking**: Track and visualize file changes during sessions
 - **External Editor Support**: Open your preferred editor for composing messages
 - **Named Arguments for Custom Commands**: Create powerful custom commands with multiple named placeholders
+- **Auto Compact**: Automatically summarize the conversation when approaching the model's context window limit
 
 ## Installation
 
@@ -111,13 +143,15 @@ You can configure OpenCode using environment variables:
 | `VERTEXAI_PROJECT`         | For Google Cloud VertexAI (Gemini)                                               |
 | `VERTEXAI_LOCATION`        | For Google Cloud VertexAI (Gemini)                                               |
 | `GROQ_API_KEY`             | For Groq models                                                                  |
+| `OPENROUTER_API_KEY`       | For OpenRouter models                                                            |
+| `XAI_API_KEY`              | For xAI (Grok) models                                                            |
 | `AWS_ACCESS_KEY_ID`        | For AWS Bedrock (Claude)                                                         |
 | `AWS_SECRET_ACCESS_KEY`    | For AWS Bedrock (Claude)                                                         |
 | `AWS_REGION`               | For AWS Bedrock (Claude)                                                         |
 | `AZURE_OPENAI_ENDPOINT`    | For Azure OpenAI models                                                          |
 | `AZURE_OPENAI_API_KEY`     | For Azure OpenAI models (optional when using Entra ID)                           |
 | `AZURE_OPENAI_API_VERSION` | For Azure OpenAI models                                                          |
-| `LOCAL_ENDPOINT`           | For self-hosted models                                                           |
+| `LOCAL_ENDPOINT`           | For self-hosted models (see [Using a self-hosted model provider](#using-a-self-hosted-model-provider)) |
 | `SHELL`                    | Default shell to use (if not specified in config)                                |
 
 ### Shell Configuration
@@ -168,7 +202,8 @@ This is useful if you want to use a different shell than your default system she
   "agents": {
     "coder": {
       "model": "claude-3.7-sonnet",
-      "maxTokens": 5000
+      "maxTokens": 5000,
+      "reasoningEffort": "high"
     },
     "task": {
       "model": "claude-3.7-sonnet",
@@ -179,6 +214,10 @@ This is useful if you want to use a different shell than your default system she
       "maxTokens": 80
     }
   },
+  "contextPaths": [
+    "opencode.md",
+    ".cursorrules"
+  ],
   "shell": {
     "path": "/bin/bash",
     "args": ["-l"]
@@ -197,10 +236,91 @@ This is useful if you want to use a different shell than your default system she
       "command": "gopls"
     }
   },
+  "tui": {
+    "theme": "opencode"
+  },
   "debug": false,
   "debugLSP": false,
   "autoCompact": true
 }
+```
+
+#### Agent Configuration Options
+
+Each agent (`coder`, `summarizer`, `task`, `title`) supports the following options:
+
+| Option            | Description                                                                                             |
+| ----------------- | ------------------------------------------------------------------------------------------------------- |
+| `model`           | Model ID (e.g. `claude-3.7-sonnet`, `gpt-4.1`, `gemini-2.5`)                                             |
+| `maxTokens`       | Maximum number of tokens the model can generate (capped at half the model's context window)               |
+| `reasoningEffort` | Reasoning effort for models that support it: `low`, `medium`, or `high` (OpenAI and local models)        |
+
+### Context Files
+
+OpenCode automatically loads project context from files such as `opencode.md`, `CLAUDE.md`, `.cursorrules`, and `.github/copilot-instructions.md` at startup. These files' contents are included as system context for the AI assistant.
+
+By default, the following paths are checked:
+
+- `.github/copilot-instructions.md`
+- `.cursorrules`
+- `.cursor/rules/`
+- `CLAUDE.md`
+- `CLAUDE.local.md`
+- `opencode.md`
+- `opencode.local.md`
+- `OpenCode.md`
+- `OpenCode.local.md`
+- `OPENCODE.md`
+- `OPENCODE.local.md`
+
+You can override this list with the `contextPaths` option in your configuration file to point at any custom context files:
+
+```json
+{
+  "contextPaths": ["docs/conventions.md", ".cursorrules"]
+}
+```
+
+### Themes
+
+OpenCode includes 9 built-in color themes with adaptive colors that work on both light and dark terminal backgrounds:
+
+| Theme         | Description                          |
+| ------------ | ----------------------------------- |
+| `opencode`   | The default OpenCode theme          |
+| `catppuccin` | Soothing pastel theme               |
+| `dracula`    | Dark purple theme                   |
+| `flexoki`    | Ink-on-paper theme                  |
+| `gruvbox`    | Retro groove color scheme           |
+| `monokai`    | Monokai Pro inspired theme          |
+| `onedark`    | Atom's One Dark theme               |
+| `tokyonight` | Tokyo Night theme                   |
+| `tron`       | Tron-inspired theme                 |
+
+You can change themes at runtime with the `Ctrl+T` shortcut, or set one permanently in your configuration file:
+
+```json
+{
+  "tui": {
+    "theme": "catppuccin"
+  }
+}
+```
+
+### JSON Schema
+
+A JSON Schema for the configuration file is available in [`opencode-schema.json`](opencode-schema.json). Reference it from your config file to get validation and autocompletion in editors that support JSON Schema:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/opencode-ai/opencode/main/opencode-schema.json"
+}
+```
+
+To regenerate the schema after changing the configuration code, run:
+
+```bash
+go run cmd/schema/main.go > opencode-schema.json
 ```
 
 ## Supported AI Models
@@ -262,6 +382,27 @@ OpenCode supports a variety of AI models from different providers:
 - Deepseek R1 distill Llama 70b
 - Llama 3.3 70b Versatile
 
+### OpenRouter
+
+- GPT-4.1 family (gpt-4.1, gpt-4.1-mini, gpt-4.1-nano)
+- GPT-4.5 Preview
+- GPT-4o family (gpt-4o, gpt-4o-mini)
+- O1 family (o1, o1-pro, o1-mini)
+- O3 family (o3, o3-mini)
+- O4 Mini
+- Claude 3.5 Sonnet / Claude 3.5 Haiku
+- Claude 3.7 Sonnet
+- Claude 3 Opus / Claude 3 Haiku
+- Gemini 2.5 / Gemini 2.5 Flash
+- DeepSeek R1 (free)
+
+### xAI
+
+- Grok 3 (beta)
+- Grok 3 mini (beta)
+- Grok 3 fast (beta)
+- Grok 3 mini fast (beta)
+
 ### Azure OpenAI
 
 - GPT-4.1 family (gpt-4.1, gpt-4.1-mini, gpt-4.1-nano)
@@ -276,6 +417,10 @@ OpenCode supports a variety of AI models from different providers:
 - Gemini 2.5
 - Gemini 2.5 Flash
 
+### Local (self-hosted)
+
+- Any model served by an OpenAI-compatible local endpoint (LM Studio, llama.cpp, Ollama, etc.). See [Using a self-hosted model provider](#using-a-self-hosted-model-provider).
+
 ## Usage
 
 ```bash
@@ -287,6 +432,9 @@ opencode -d
 
 # Start with a specific working directory
 opencode -c /path/to/project
+
+# Print version
+opencode -v
 ```
 
 ## Non-interactive Prompt Mode
@@ -324,6 +472,7 @@ The output format is implemented as a strongly-typed `OutputFormat` in the codeb
 | Flag              | Short | Description                                         |
 | ----------------- | ----- | --------------------------------------------------- |
 | `--help`          | `-h`  | Display help information                            |
+| `--version`       | `-v`  | Print version and exit                              |
 | `--debug`         | `-d`  | Enable debug mode                                   |
 | `--cwd`           | `-c`  | Set current working directory                       |
 | `--prompt`        | `-p`  | Run a single prompt in non-interactive mode         |
@@ -340,9 +489,11 @@ The output format is implemented as a strongly-typed `OutputFormat` in the codeb
 | `Ctrl+?` | Toggle help dialog                                      |
 | `?`      | Toggle help dialog (when not in editing mode)           |
 | `Ctrl+L` | View logs                                               |
-| `Ctrl+A` | Switch session                                          |
+| `Ctrl+S` | Switch session (when editor is not focused)              |
 | `Ctrl+K` | Command dialog                                          |
 | `Ctrl+O` | Toggle model selection dialog                           |
+| `Ctrl+T` | Switch theme                                            |
+| `Ctrl+F` | Select files/images to attach to your message           |
 | `Esc`    | Close current overlay/dialog or return to previous mode |
 
 ### Chat Page Shortcuts
@@ -358,10 +509,14 @@ The output format is implemented as a strongly-typed `OutputFormat` in the codeb
 
 | Shortcut            | Action                                    |
 | ------------------- | ----------------------------------------- |
-| `Ctrl+S`            | Send message (when editor is focused)     |
-| `Enter` or `Ctrl+S` | Send message (when editor is not focused) |
+| `Enter` or `Ctrl+S` | Send message (when editor is focused)     |
+| `\` + `Enter`       | Insert a newline instead of sending       |
 | `Ctrl+E`            | Open external editor                      |
+| `Ctrl+R` + index    | Delete the attachment at the given index  |
+| `Ctrl+R` `R`       | Delete all attachments                    |
 | `Esc`               | Blur editor and focus messages            |
+
+> **Tip:** If the last character of your message is a backslash, pressing `Enter` inserts a newline instead of sending — useful for composing multi-line messages.
 
 ### Session Dialog Shortcuts
 
@@ -398,6 +553,18 @@ The output format is implemented as a strongly-typed `OutputFormat` in the codeb
 | Shortcut           | Action              |
 | ------------------ | ------------------- |
 | `Backspace` or `q` | Return to chat page |
+
+## Image Attachments
+
+OpenCode supports attaching images to your messages, which is useful for sharing screenshots, error messages, or designs with vision-capable models.
+
+- Press `Ctrl+F` to open the file picker and select an image
+- Supported formats: `.jpg`, `.jpeg`, `.png`, and `.webp`
+- Maximum file size: 5 MB
+- Maximum of 5 attachments per message
+- Images are previewed directly in the file picker
+
+The selected model must support attachments (most vision-capable models do). Use `Ctrl+R` followed by an index to remove an attachment, or `Ctrl+R` `R` to remove them all.
 
 ## AI Assistant Tools
 
@@ -659,6 +826,7 @@ You can also configure a self-hosted model in the configuration file under the `
 ### Prerequisites
 
 - Go 1.24.0 or higher
+- [sqlc](https://sqlc.dev/) (only needed when changing database queries or migrations)
 
 ### Building from Source
 
@@ -672,6 +840,30 @@ go build -o opencode
 
 # Run
 ./opencode
+```
+
+### Running Tests
+
+```bash
+go test ./...
+```
+
+### Database Code Generation
+
+The SQLite data layer is generated with [sqlc](https://sqlc.dev/). If you change the SQL queries in `internal/db/sql/` or the migrations in `internal/db/migrations/`, regenerate the Go code:
+
+```bash
+sqlc generate
+```
+
+The configuration lives in [`sqlc.yaml`](sqlc.yaml).
+
+### Debug Logging
+
+For development, set `OPENCODE_DEV_DEBUG=true` to write logs to `.opencode/debug.log` and persist message debugging information:
+
+```bash
+OPENCODE_DEV_DEBUG=true go run .
 ```
 
 ## Acknowledgments
