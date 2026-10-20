@@ -1,66 +1,50 @@
-# ===== OS =====
-.DS_Store
-._*
-Thumbs.db
-Desktop.ini
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 
-# ===== IDE/Editor =====
-.vscode/
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+
+# IDE specific files
 .idea/
-.project
-.classpath
-.settings/
-*.sublime-*
-
-# ===== Node.js/Frontend =====
-node_modules/
-.pnpm-store/
-.next/
-.nuxt/
-.vite/
-.cache/
-.eslintcache
-*.tsbuildinfo
-
-# ===== Python =====
-__pycache__/
-*.pyc
-*.pyo
-.venv/
-venv/
-.pytest_cache/
-.mypy_cache/
-.ipynb_checkpoints/
-*.egg-info/
-
-# ===== Rust =====
-target/
-
-# ===== Java/JVM =====
-.gradle/
-*.class
-*.jar
-*.war
-*.ear
-
-# ===== Ruby =====
-.bundle/
-
-# ===== Logs/Temp =====
-*.log
-logs/
-*.tmp
-*.temp
+.vscode/
 *.swp
 *.swo
-*~
 
-# ===== Test Coverage =====
-coverage/
-.nyc_output/
-htmlcov/
-.coverage
-*.lcov
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.log
 
-# ===== Internal =====
+# Binary output directory
+/bin/
+/dist/
+
+# Local environment variables
+.env
+.env.local
+
+.opencode/
+
+opencode
+opencode.md
+
+# Internal
 /.work/
