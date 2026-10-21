@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "id": "image-001",
+      "title": "哈基米宠物萌图",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1792548742794,
+      "devMetadata": {
+        "imageSrc": "assets/hachimi-pet-portrait.jpg"
+      },
+      "canvasData": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "freeSize",
+    "projectName": "哈基米宠物"
+  }
+}
