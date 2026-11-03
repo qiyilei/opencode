@@ -6,12 +6,16 @@
       "type": "image",
       "version": 1,
       "createdAt": 1792548742794,
-      "devMetadata": {
-        "imageSrc": "assets/hachimi-pet-portrait.jpg"
-      },
       "canvasData": {
         "x": 0,
-        "y": 0
+        "y": 0,
+        "naturalSize": {
+          "width": 1920,
+          "height": 1920
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/hachimi-pet-portrait.jpg"
       }
     }
   ],
