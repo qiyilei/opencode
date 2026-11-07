@@ -340,7 +340,7 @@ OpenCode supports a variety of AI models from different providers:
 
 ### Google
 
-- Gemini 2.5
+- Gemini 2.5 Pro
 - Gemini 2.5 Flash
 - Gemini 2.0 Flash
 - Gemini 2.0 Flash Lite
@@ -368,7 +368,7 @@ OpenCode supports a variety of AI models from different providers:
 - Claude 3.5 Sonnet / Claude 3.5 Haiku
 - Claude 3.7 Sonnet
 - Claude 3 Opus / Claude 3 Haiku
-- Gemini 2.5 / Gemini 2.5 Flash
+- Gemini 2.5 Pro / Gemini 2.5 Flash
 - DeepSeek R1 (free)
 
 ### xAI
@@ -389,7 +389,7 @@ OpenCode supports a variety of AI models from different providers:
 
 ### Google Cloud VertexAI
 
-- Gemini 2.5
+- Gemini 2.5 Pro
 - Gemini 2.5 Flash
 
 ### Local (self-hosted)
@@ -476,9 +476,8 @@ The output format is implemented as a strongly-typed `OutputFormat` in the codeb
 | Shortcut | Action                                  |
 | -------- | --------------------------------------- |
 | `Ctrl+N` | Create new session                      |
-| `Ctrl+X` | Cancel current operation/generation     |
+| `Esc`    | Cancel generation or exit writing mode  |
 | `i`      | Focus editor (when not in writing mode) |
-| `Esc`    | Exit writing mode and focus messages    |
 
 ### Editor Shortcuts
 
@@ -510,6 +509,7 @@ The output format is implemented as a strongly-typed `OutputFormat` in the codeb
 | `↓` or `j` | Move down         |
 | `←` or `h` | Previous provider |
 | `→` or `l` | Next provider     |
+| `Enter`    | Select model      |
 | `Esc`      | Close dialog      |
 
 ### Permission Dialog Shortcuts
@@ -520,7 +520,7 @@ The output format is implemented as a strongly-typed `OutputFormat` in the codeb
 | `→` or `right` or `tab` | Switch options right         |
 | `Enter` or `space`      | Confirm selection            |
 | `a`                     | Allow permission             |
-| `A`                     | Allow permission for session |
+| `s`                     | Allow permission for session |
 | `d`                     | Deny permission              |
 
 ### Logs Page Shortcuts
@@ -555,7 +555,7 @@ OpenCode's AI assistant has access to various tools to help with coding tasks:
 | `view`        | View file contents          | `file_path` (required), `offset` (optional), `limit` (optional)                          |
 | `write`       | Write to files              | `file_path` (required), `content` (required)                                             |
 | `edit`        | Edit files                  | Various parameters for file editing                                                      |
-| `patch`       | Apply patches to files      | `file_path` (required), `diff` (required)                                                |
+| `patch`       | Apply patches to files      | `patch_text` (required)                                                                  |
 | `diagnostics` | Get diagnostics information | `file_path` (optional)                                                                   |
 
 ### Other Tools
