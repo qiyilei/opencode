@@ -1,17 +1,8 @@
-# Archived: Project has Moved
-
-This repository is no longer maintained and has been archived for provenance.
-
-The project has continued under the name [Crush][crush], developed by the original author and the Charm team.
-
-Please follow [Crush][crush] for ongoing development.
-
-[crush]: https://github.com/charmbracelet/crush
-
-
 # ⌬ OpenCode
 
 <p align="center"><img src="https://github.com/user-attachments/assets/9ae61ef6-70e5-4876-bc45-5bcb4e52c714" width="800"></p>
+
+> **Note:** This repository (`qiyilei/opencode`) is a fork of the archived [`opencode-ai/opencode`](https://github.com/opencode-ai/opencode) project. Upstream development now continues as [Crush](https://github.com/charmbracelet/crush); this fork is maintained independently.
 
 > **⚠️ Early Development Notice:** This project is in early development and is not yet ready for production use. Features may change, break, or be incomplete. Use at your own risk.
 
@@ -73,37 +64,21 @@ OpenCode is a Go-based CLI application that brings AI assistance to your termina
 
 ## Installation
 
-### Using the Install Script
+This fork is distributed as source code. Build it locally with Go 1.24.0 or newer:
 
 ```bash
-# Install the latest version
-curl -fsSL https://raw.githubusercontent.com/opencode-ai/opencode/refs/heads/main/install | bash
+# Clone the repository
+git clone https://github.com/qiyilei/opencode.git
+cd opencode
 
-# Install a specific version
-curl -fsSL https://raw.githubusercontent.com/opencode-ai/opencode/refs/heads/main/install | VERSION=0.1.0 bash
+# Build
+go build -o opencode
+
+# Run
+./opencode
 ```
 
-### Using Homebrew (macOS and Linux)
-
-```bash
-brew install opencode-ai/tap/opencode
-```
-
-### Using AUR (Arch Linux)
-
-```bash
-# Using yay
-yay -S opencode-ai-bin
-
-# Using paru
-paru -S opencode-ai-bin
-```
-
-### Using Go
-
-```bash
-go install github.com/opencode-ai/opencode@latest
-```
+Prebuilt binaries, Homebrew, and AUR packages are not provided by this fork; use the upstream [`opencode-ai/opencode`](https://github.com/opencode-ai/opencode) project if you prefer those distribution channels.
 
 ## Configuration
 
@@ -313,7 +288,7 @@ A JSON Schema for the configuration file is available in [`opencode-schema.json`
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/opencode-ai/opencode/main/opencode-schema.json"
+  "$schema": "https://raw.githubusercontent.com/qiyilei/opencode/main/opencode-schema.json"
 }
 ```
 
@@ -831,10 +806,6 @@ You can also configure a self-hosted model in the configuration file under the `
 ### Building from Source
 
 ```bash
-# Clone the repository
-git clone https://github.com/opencode-ai/opencode.git
-cd opencode
-
 # Build
 go build -o opencode
 
