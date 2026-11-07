@@ -39,7 +39,7 @@ OpenCode is a Go-based CLI application that brings AI assistance to your termina
 - [Custom Commands](#custom-commands)
 - [MCP (Model Context Protocol)](#mcp-model-context-protocol)
 - [LSP (Language Server Protocol)](#lsp-language-server-protocol)
-- [Using Github Copilot](#using-github-copilot)
+- [Using GitHub Copilot](#using-github-copilot)
 - [Using a self-hosted model provider](#using-a-self-hosted-model-provider)
 - [Development](#development)
 - [Acknowledgments](#acknowledgments)
@@ -52,7 +52,7 @@ OpenCode is a Go-based CLI application that brings AI assistance to your termina
 - **Multiple AI Providers**: Support for OpenAI, Anthropic Claude, Google Gemini, AWS Bedrock, Groq, Azure OpenAI, OpenRouter, and xAI
 - **Session Management**: Save and manage multiple conversation sessions
 - **Tool Integration**: AI can execute commands, search files, and modify code
-- **Vim-like Editor**: Integrated editor with text input capabilities
+- **Integrated Editor**: Multiline text input with attachment support
 - **Image Attachments**: Attach images to your messages via the built-in file picker (with image preview)
 - **Themes**: 9 built-in color themes (including Catppuccin, Dracula, Gruvbox, Tokyo Night) with light/dark terminal support
 - **Persistent Storage**: SQLite database for storing conversations and sessions
@@ -114,7 +114,7 @@ You can configure OpenCode using environment variables:
 | `ANTHROPIC_API_KEY`        | For Claude models                                                                |
 | `OPENAI_API_KEY`           | For OpenAI models                                                                |
 | `GEMINI_API_KEY`           | For Google Gemini models                                                         |
-| `GITHUB_TOKEN`             | For Github Copilot models (see [Using Github Copilot](#using-github-copilot))    |
+| `GITHUB_TOKEN`             | For GitHub Copilot models (see [Using GitHub Copilot](#using-github-copilot))    |
 | `VERTEXAI_PROJECT`         | For Google Cloud VertexAI (Gemini)                                               |
 | `VERTEXAI_LOCATION`        | For Google Cloud VertexAI (Gemini)                                               |
 | `GROQ_API_KEY`             | For Groq models                                                                  |
@@ -572,15 +572,23 @@ OpenCode's AI assistant has access to various tools to help with coding tasks:
 OpenCode is built with a modular architecture:
 
 - **cmd**: Command-line interface using Cobra
-- **internal/app**: Core application services
+- **internal/app**: Core application services and dependency wiring
+- **internal/completions**: Shell completion helpers
 - **internal/config**: Configuration management
-- **internal/db**: Database operations and migrations
-- **internal/llm**: LLM providers and tools integration
-- **internal/tui**: Terminal UI components and layouts
+- **internal/db**: SQLite database operations and migrations
+- **internal/diff**: Patch and diff parsing
+- **internal/fileutil**: File system helpers
+- **internal/format**: Output formatting for non-interactive mode
+- **internal/history**: File change tracking
+- **internal/llm**: LLM providers, models, agents, prompts, and tools
 - **internal/logging**: Logging infrastructure
+- **internal/lsp**: Language Server Protocol client
 - **internal/message**: Message handling
+- **internal/permission**: Permission system
+- **internal/pubsub**: Event pub/sub broker
 - **internal/session**: Session management
-- **internal/lsp**: Language Server Protocol integration
+- **internal/tui**: Terminal UI components and layouts
+- **internal/version**: Build version metadata
 
 ## Custom Commands
 
@@ -748,24 +756,24 @@ The AI assistant can access LSP features through the `diagnostics` tool, allowin
 
 While the LSP client implementation supports the full LSP protocol (including completions, hover, definition, etc.), currently only diagnostics are exposed to the AI assistant.
 
-## Using Github Copilot
+## Using GitHub Copilot
 
 _Copilot support is currently experimental._
 
 ### Requirements
 - [Copilot chat in the IDE](https://github.com/settings/copilot) enabled in GitHub settings
 - One of:
-  - VSCode Github Copilot chat extension
-  - Github `gh` CLI
-  - Neovim Github Copilot plugin (`copilot.vim` or `copilot.lua`)
-  - Github token with copilot permissions
+  - VS Code GitHub Copilot chat extension
+  - GitHub `gh` CLI
+  - Neovim GitHub Copilot plugin (`copilot.vim` or `copilot.lua`)
+  - GitHub token with Copilot permissions
 
-If using one of the above plugins or cli tools, make sure you use the authenticate
-the tool with your github account. This should create a github token at one of the following locations:
+If using one of the above plugins or CLI tools, make sure you authenticate
+the tool with your GitHub account. This should create a GitHub token at one of the following locations:
 - ~/.config/github-copilot/[hosts,apps].json
 - $XDG_CONFIG_HOME/github-copilot/[hosts,apps].json
 
-If using an explicit github token, you may either set the $GITHUB_TOKEN environment variable or add it to the opencode.json config file at `providers.copilot.apiKey`.
+If using an explicit GitHub token, you may either set the `GITHUB_TOKEN` environment variable or add it to the `.opencode.json` config file at `providers.copilot.apiKey`.
 
 ## Using a self-hosted model provider
 
