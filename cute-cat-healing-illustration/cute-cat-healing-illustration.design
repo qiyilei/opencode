@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "id": "image-001",
+      "title": "治愈系小猫插画",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1794888014516,
+      "devMetadata": {
+        "imageSrc": "assets/healing-cat-illustration.jpg"
+      },
+      "canvasData": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "freeSize",
+    "projectName": "可爱小猫治愈插画"
+  }
+}
